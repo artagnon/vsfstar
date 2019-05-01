@@ -1,0 +1,18 @@
+{
+	"name": "vsfstar-server",
+	"description": "F* Language Server",
+	"author": "Ramkumar Ramachandra",
+	"publisher": "artagnon",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/artagnon/vsfstar"
+	},
+	"license": "MIT",
+	"version": "0.0.1",
+	"engines": {
+		"node": "^12.1.0"
+	},
+	"dependencies": {
+		"vscode-languageserver": "^4.1.3"
+	}
+}
