@@ -5,14 +5,18 @@ import {
     Diagnostic,
     DiagnosticSeverity,
     ProposedFeatures,
-    InitializeParams,
     DidChangeConfigurationNotification,
     CompletionItem,
     CompletionItemKind,
     TextDocumentPositionParams,
     InitializeResult,
     ServerCapabilities,
-    TextDocumentSyncKind
+    TextDocumentSyncKind,
+    DocumentLinkParams,
+    Location,
+    SymbolInformation,
+    DocumentSymbolParams,
+    DocumentLink
 } from 'vscode-languageserver';
 
 import {FStarSettings} from './proto';
@@ -161,6 +165,30 @@ connection.onDidChangeWatchedFiles(_change => {
     connection.console.log('We received an file change event');
 });
 
+connection.onDefinition((params: TextDocumentPositionParams) : Promise<Location|Location[]>|Location|Location[] => {
+  const doc = project.lookup(params.textDocument.uri);
+  if (!doc) {
+    return [];
+  }
+  else {
+    return doc.provideDefinition(params.position);
+  }
+});
+
+connection.onDocumentSymbol((params: DocumentSymbolParams) : SymbolInformation[] => {
+  const doc = project.lookup(params.textDocument.uri);
+  if (!doc) {
+    return [];
+  }
+  else {
+    return doc.provideSymbols();
+  }
+});
+
+connection.onDocumentLinks((p:DocumentLinkParams,token: CancellationToken) : Promise<DocumentLink[]> => Promise.resolve([]));
+
+connection.onDocumentLinkResolve((link: DocumentLink,token: CancellationToken) : DocumentLink => link);
+
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
     (_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
@@ -204,26 +232,6 @@ import {FStarProject} from './project';
 connection.onRequest(proto.StepForwardRequest.type, (params: proto.FStarParams, token: CancellationToken) => {
   return project.lookup(params.uri).stepForward(token);
 });
-
-/*
-connection.onDidOpenTextDocument((params) => {
-    // A text document got opened in VSCode.
-    // params.uri uniquely identifies the document. For documents store on disk this is a file URI.
-    // params.text the initial full content of the document.
-    connection.console.log(`${params.textDocument.uri} opened.`);
-});
-connection.onDidChangeTextDocument((params) => {
-    // The content of a text document did change in VSCode.
-    // params.uri uniquely identifies the document.
-    // params.contentChanges describe the content changes to the document.
-    connection.console.log(`${params.textDocument.uri} changed: ${JSON.stringify(params.contentChanges)}`);
-});
-connection.onDidCloseTextDocument((params) => {
-    // A text document got closed in VSCode.
-    // params.uri uniquely identifies the document.
-    connection.console.log(`${params.textDocument.uri} closed.`);
-});
-*/
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events

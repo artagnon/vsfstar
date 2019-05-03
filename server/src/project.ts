@@ -29,6 +29,15 @@ export class FStarDocument implements TextDocument {
     : Promise<proto.CommandResult> {
       return {type: 'not-running', reason: "not-started"};
     }
+
+    public provideSymbols() : vscode.SymbolInformation[] {
+      return [];
+    }
+
+    public async provideDefinition(pos: vscode.Position)
+    : Promise<vscode.Location|vscode.Location[]> {
+      return [];
+    }
   }
 
 export class FStarProject {
