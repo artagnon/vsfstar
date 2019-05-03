@@ -62,7 +62,7 @@ export class FStarProject implements vscode.Disposable {
     this.onDidCloseTextDocument(params));
     vscode.window.onDidChangeActiveTextEditor((params) =>
     this.onDidChangeActiveTextEditor(params));
-      // Handle already-loaded documents
+    // Handle already-loaded documents
     vscode.workspace.textDocuments.forEach((textDoc) =>
     this.tryLoadDocument(textDoc));
 
@@ -123,7 +123,7 @@ export class FStarProject implements vscode.Disposable {
   }
 
   private onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
-    if(!this.activeEditor) {
+    if (!this.activeEditor) {
       return;
     }
     let oldUri : string|null;

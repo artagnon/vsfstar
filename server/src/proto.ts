@@ -1,3 +1,5 @@
+'use strict';
+
 import { RequestType } from 'vscode-jsonrpc';
 import * as vscode from 'vscode-languageserver-types';
 
