@@ -16,18 +16,12 @@ export interface FailValue {
 }
 
 export type FocusPosition = {focus: vscode.Position};
-export type NotRunningTag = {type: 'not-running'};
-export type NoProofTag = {type: 'no-proof'};
-export type FailureTag = {type: 'failure'};
-export type ProofViewTag = {type: 'proof-view'};
-export type InterruptedTag = {type: 'interrupted'};
-export type BusyTag = {type: 'busy'};
-export type NotRunningResult = NotRunningTag & {reason: "not-started"|"spawn-failed", coqtop?: string};
-export type BusyResult = BusyTag;
-export type NoProofResult = NoProofTag;
-export type FailureResult = FailValue & FailureTag;
-export type ProofViewResult = ProofViewTag;
-export type InterruptedResult = vscode.Range & InterruptedTag;
+export type NotRunningResult = {type: 'not-running'} & {reason: "not-started"|"spawn-failed", coqtop?: string};
+export type BusyResult = {type: 'busy'};
+export type NoProofResult = {type: 'no-proof'};
+export type FailureResult = FailValue & {type: 'failure'};
+export type ProofViewResult = {type: 'proof-view'};
+export type InterruptedResult = vscode.Range & {type: 'interrupted'};
 export type CommandResult =
   NotRunningResult |
   BusyResult |

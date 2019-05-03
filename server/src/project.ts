@@ -37,7 +37,7 @@ export class FStarProject {
   private workspaceRoot: string;
 
   constructor(workspaceRoot: string, private readonly connection: vscode.IConnection) {
-    if(workspaceRoot) {
+    if (workspaceRoot) {
       connection.console.log("Loaded project at " + workspaceRoot);
     }
     else {
@@ -46,7 +46,7 @@ export class FStarProject {
     this.workspaceRoot = workspaceRoot;
   }
 
-  public lookup(uri: string) : FStarDocument {
+  public lookup(this: FStarProject, uri: string) : FStarDocument {
     var doc = this.fstarInstances.get(uri);
     if (!doc) {
       throw new Error('unknown document: ' + uri);

@@ -29,8 +29,12 @@ let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let hasDiagnosticRelatedInformationCapability: boolean = false;
 
+export let project : FStarProject = null;
+
 connection.onInitialize((params): InitializeResult => {
+  connection.console.log(`F* Language Server: process.version: ${process.version}, process.arch: ${process.arch}}`);
   project = new FStarProject(params.rootPath, connection);
+
   return {
       capabilities: <ServerCapabilities>{
           textDocumentSync: TextDocumentSyncKind.Incremental,
@@ -42,7 +46,7 @@ connection.onInitialize((params): InitializeResult => {
             resolveProvider: true
           },
           documentSymbolProvider: true,
-          definitionProvider: true,
+          definitionProvider: true
       }
   };
 });
@@ -57,6 +61,10 @@ connection.onInitialized(() => {
             connection.console.log('Workspace folder change event received.');
         });
     }
+});
+
+process.on('SIGBREAK', function () {
+  connection.console.log('SIGBREAK fired');
 });
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
@@ -192,9 +200,6 @@ connection.onCompletionResolve(
 import {RequestType, CancellationToken} from 'vscode-jsonrpc';
 import * as proto from './proto';
 import {FStarProject} from './project';
-
-export let project : FStarProject = null;
-
 
 connection.onRequest(proto.StepForwardRequest.type, (params: proto.FStarParams, token: CancellationToken) => {
   return project.lookup(params.uri).stepForward(token);
