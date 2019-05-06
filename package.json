@@ -1,61 +1,84 @@
 {
-	"name": "vsfstar",
-	"displayName": "F* IDE",
-	"description": "Complete F* mode with IDE capabilities",
-	"author": "Ramkumar Ramachandra",
-	"publisher": "artagnon",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/artagnon/vsfstar"
-	},
-	"license": "MIT",
-	"version": "0.0.1",
-	"engines": {
-		"vscode": "^1.33.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onLanguage:fstar"
-	],
-	"main": "./client/out/extension",
-	"contributes": {
-		"configuration": {
-			"type": "object",
-			"title": "F* configuration",
-			"properties": {
-				"fstar.binPath": {
-					"type": "string",
-					"default": "",
-					"description": "Path to coqc and coqtop binaries."
-				},
-				"fstar.trace": {
-					"scope": "window",
-					"type": "string",
-					"enum": [
-						"off",
-						"messages",
-						"verbose"
-					],
-					"default": "off",
-					"description": "Traces the communication between VS Code and the language server."
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -b",
-		"watch": "tsc -b -w",
-		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
-		"test": "node ./node_modules/vscode/bin/test"
-	},
-	"devDependencies": {
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.30",
-		"tslint": "^5.12.1",
-		"@types/node": "^10.12.21",
-		"@types/mocha": "^2.2.42"
-	}
+  "name": "vsfstar",
+  "description": "VSCode part of a language server",
+  "author": "Ramkumar Ramachandra",
+  "publisher": "artagnon",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/artagnon/vsfstar"
+  },
+  "license": "MIT",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.33.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Snippets"
+  ],
+  "keywords": [
+    "FStar",
+    "IDE"
+  ],
+  "activationEvents": [
+    "onLanguage:fstar"
+  ],
+  "main": "out/extension",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "fstar configuration",
+      "properties": {
+        "fstar.path": {
+          "type": "string",
+          "default": "fstar",
+          "description": "The path to fstar executable, e.g.: /usr/bin/fstar"
+        },
+        "fstar.arguments": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "Arguments for fstar server"
+        },
+        "fstar.syncFileEvents": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether or not to send file events to fstar (File created, changed or deleted). This can be disabled for performance consideration."
+        },
+        "fstar.trace": {
+          "type": "string",
+          "description": "Names a file that fstar should log a performance trace to, in chrome trace-viewer JSON format."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "vsfstar.switchheadersource",
+        "title": "Switch between Source/Header"
+      },
+      {
+        "command": "vsfstar.activate",
+        "title": "Manually activate fstar extension"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -b",
+    "watch": "tsc -b -w",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^5.2.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.42",
+    "@types/node": "^10.12.21",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.1",
+    "vscode": "^1.1.30"
+  }
 }
