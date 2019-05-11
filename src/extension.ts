@@ -1,6 +1,14 @@
 import * as vscode from 'vscode';
-import * as vscodelc from 'vscode-languageclient';
-import { realpathSync } from 'fs';
+import {
+  Trace,
+  RequestType,
+  TextDocumentIdentifier,
+  LanguageClientOptions,
+  RevealOutputChannelOn,
+  State,
+  ServerOptions,
+  LanguageClient
+} from 'vscode-languageclient';
 
 /**
  * Method to get workspace configuration option
@@ -14,7 +22,7 @@ function getConfig<T>(option: string, defaultValue?: any): T {
 
 namespace SwitchSourceHeaderRequest {
   export const type =
-    new vscodelc.RequestType<vscodelc.TextDocumentIdentifier, string | undefined,
+    new RequestType<TextDocumentIdentifier, string | undefined,
       void, void>('textDocument/switchSourceHeader');
 }
 
@@ -57,25 +65,21 @@ class FileStatus {
 export function activate(context: vscode.ExtensionContext) {
   const syncFileEvents = getConfig<boolean>('syncFileEvents', true);
 
-  const fstar: vscodelc.Executable = {
+  const serverOptions: ServerOptions = {
     command: getConfig<string>('path'),
-    args: getConfig<string[]>('arguments', '--ide')
+    args: getConfig<string[]>('arguments', '--lsp'),
   };
-  const traceFile = getConfig<string>('trace');
-  if (!!traceFile) {
-    const trace = { FSTAR_TRACE: traceFile };
-    fstar.options = { env: { ...process.env, ...trace } };
-  }
-  const serverOptions: vscodelc.ServerOptions = fstar;
 
-  const clientOptions: vscodelc.LanguageClientOptions = {
+  const clientOptions: LanguageClientOptions = {
     initializationOptions: { fstarFileStatus: true },
 
     // Do not switch to output window when fstar returns output
-    revealOutputChannelOn: vscodelc.RevealOutputChannelOn.Never
+    revealOutputChannelOn: RevealOutputChannelOn.Never
   };
 
-  const fstarClient = new vscodelc.LanguageClient('F* Language Server', serverOptions, clientOptions);
+  const fstarClient = new LanguageClient('F* Language Server', serverOptions, clientOptions);
+  if (getConfig<boolean>('trace')) { fstarClient.trace = Trace.Verbose; }
+
   console.log('F* Language Server is now active!');
   context.subscriptions.push(fstarClient.start());
   context.subscriptions.push(vscode.commands.registerCommand(
@@ -86,7 +90,7 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
       const docIdentifier =
-        vscodelc.TextDocumentIdentifier.create(uri.toString());
+        TextDocumentIdentifier.create(uri.toString());
       const sourceUri = await fstarClient.sendRequest(
         SwitchSourceHeaderRequest.type, docIdentifier);
       if (!sourceUri) {
@@ -102,12 +106,12 @@ export function activate(context: vscode.ExtensionContext) {
   }));
   fstarClient.onDidChangeState(
     ({ newState }) => {
-      if (newState === vscodelc.State.Running) {
+      if (newState === State.Running) {
         // fstar starts or restarts after crash.
         fstarClient.onNotification(
           'textDocument/fstar.fileStatus',
           (fileStatus) => { status.onFileUpdated(fileStatus); });
-      } else if (newState === vscodelc.State.Stopped) {
+      } else if (newState === State.Stopped) {
         // Clear all cached statuses when fstar crashes.
         status.clear();
       }
