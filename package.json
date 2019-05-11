@@ -1,6 +1,6 @@
 {
   "name": "vsfstar",
-  "description": "VSCode part of a language server",
+  "description": "F* LSP client",
   "author": "Ramkumar Ramachandra",
   "publisher": "artagnon",
   "repository": {
@@ -32,8 +32,8 @@
       "properties": {
         "fstar.path": {
           "type": "string",
-          "default": "fstar",
-          "description": "The path to fstar executable, e.g.: /usr/bin/fstar"
+          "default": "fstar.exe",
+          "description": "The path to F* executable"
         },
         "fstar.arguments": {
           "type": "array",
@@ -41,17 +41,12 @@
           "items": {
             "type": "string"
           },
-          "description": "Arguments for fstar server"
+          "description": "Arguments for F* server"
         },
         "fstar.syncFileEvents": {
           "type": "boolean",
           "default": true,
           "description": "Whether or not to send file events to fstar (File created, changed or deleted). This can be disabled for performance consideration."
-        },
-        "fstar.trace": {
-          "type": "boolean",
-          "default": true,
-          "description": "Traces the communication between VS Code and the language server."
         }
       }
     },

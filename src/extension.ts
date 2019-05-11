@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import {
-  Trace,
   RequestType,
   TextDocumentIdentifier,
   LanguageClientOptions,
@@ -67,7 +66,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const serverOptions: ServerOptions = {
     command: getConfig<string>('path'),
-    args: getConfig<string[]>('arguments', '--lsp'),
+    args: getConfig<string[]>('arguments', ['--lsp']),
   };
 
   const clientOptions: LanguageClientOptions = {
@@ -78,7 +77,6 @@ export function activate(context: vscode.ExtensionContext) {
   };
 
   const fstarClient = new LanguageClient('F* Language Server', serverOptions, clientOptions);
-  if (getConfig<boolean>('trace')) { fstarClient.trace = Trace.Verbose; }
 
   console.log('F* Language Server is now active!');
   context.subscriptions.push(fstarClient.start());
