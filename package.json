@@ -19,10 +19,12 @@
   ],
   "keywords": [
     "FStar",
-    "IDE"
+    "IDE",
+    "Language Server Protocol"
   ],
   "activationEvents": [
-    "onLanguage:fstar"
+    "onLanguage:fstar",
+    "onCommand:vsfstar.activate"
   ],
   "main": "out/extension",
   "contributes": {
@@ -42,11 +44,6 @@
             "type": "string"
           },
           "description": "Arguments for F* server"
-        },
-        "fstar.syncFileEvents": {
-          "type": "boolean",
-          "default": true,
-          "description": "Whether or not to send file events to fstar (File created, changed or deleted). This can be disabled for performance consideration."
         }
       }
     },

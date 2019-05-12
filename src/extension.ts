@@ -3,7 +3,6 @@ import {
   RequestType,
   TextDocumentIdentifier,
   LanguageClientOptions,
-  RevealOutputChannelOn,
   State,
   ServerOptions,
   LanguageClient
@@ -57,23 +56,20 @@ class FileStatus {
   }
 }
 
-/**
- *  this method is called when your extension is activate
- *  your extension is activated the very first time the command is executed
- */
+// This method is called when your extension is activated
+// the very first time
 export function activate(context: vscode.ExtensionContext) {
-  const syncFileEvents = getConfig<boolean>('syncFileEvents', true);
-
   const serverOptions: ServerOptions = {
     command: getConfig<string>('path'),
     args: getConfig<string[]>('arguments', ['--lsp']),
   };
 
-  const clientOptions: LanguageClientOptions = {
-    initializationOptions: { fstarFileStatus: true },
+  const filePattern: string = '**/*.{' +
+  ['fs', 'fsi', 'fst', 'fsti'].join() + '}';
 
-    // Do not switch to output window when fstar returns output
-    revealOutputChannelOn: RevealOutputChannelOn.Never
+  const clientOptions: LanguageClientOptions = {
+    documentSelector: [{ scheme: 'file', pattern: filePattern }],
+    synchronize: { fileEvents: vscode.workspace.createFileSystemWatcher(filePattern) }
   };
 
   const fstarClient = new LanguageClient('F* Language Server', serverOptions, clientOptions);
@@ -105,7 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
   fstarClient.onDidChangeState(
     ({ newState }) => {
       if (newState === State.Running) {
-        // fstar starts or restarts after crash.
+        // fstar.exe starts or restarts after crash.
         fstarClient.onNotification(
           'textDocument/fstar.fileStatus',
           (fileStatus) => { status.onFileUpdated(fileStatus); });
