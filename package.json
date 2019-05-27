@@ -39,7 +39,6 @@
         },
         "fstar.arguments": {
           "type": "array",
-          "default": [],
           "items": {
             "type": "string"
           },

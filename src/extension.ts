@@ -68,8 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
   ['fs', 'fsi', 'fst', 'fsti'].join() + '}';
 
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: 'file', pattern: filePattern }],
-    synchronize: { fileEvents: vscode.workspace.createFileSystemWatcher(filePattern) }
+    documentSelector: [{ scheme: 'file', pattern: filePattern }]
   };
 
   const fstarClient = new LanguageClient('F* Language Server', serverOptions, clientOptions);
