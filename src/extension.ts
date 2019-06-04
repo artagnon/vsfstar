@@ -1,9 +1,6 @@
 import * as vscode from 'vscode';
 import {
-  RequestType,
-  TextDocumentIdentifier,
   LanguageClientOptions,
-  State,
   ServerOptions,
   LanguageClient
 } from 'vscode-languageclient';
@@ -18,97 +15,24 @@ function getConfig<T>(option: string, defaultValue?: any): T {
   return config.get<T>(option, defaultValue);
 }
 
-namespace SwitchSourceHeaderRequest {
-  export const type =
-    new RequestType<TextDocumentIdentifier, string | undefined,
-      void, void>('textDocument/switchSourceHeader');
-}
-
-class FileStatus {
-  private statuses = new Map<string, any>();
-  private readonly statusBarItem =
-    vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 10);
-
-  onFileUpdated(fileStatus: any) {
-    const filePath = vscode.Uri.parse(fileStatus.uri);
-    this.statuses.set(filePath.fsPath, fileStatus);
-    this.updateStatus();
-  }
-
-  updateStatus() {
-    const path = vscode.window.activeTextEditor.document.fileName;
-    const status = this.statuses.get(path);
-    if (!status) {
-      this.statusBarItem.hide();
-      return;
-    }
-    this.statusBarItem.text = `fstar: ` + status.state;
-    this.statusBarItem.show();
-  }
-
-  clear() {
-    this.statuses.clear();
-    this.statusBarItem.hide();
-  }
-
-  dispose() {
-    this.statusBarItem.dispose();
-  }
-}
-
 // This method is called when your extension is activated
 // the very first time
 export function activate(context: vscode.ExtensionContext) {
   const serverOptions: ServerOptions = {
     command: getConfig<string>('path'),
-    args: getConfig<string[]>('arguments', ['--lsp']),
+    args: ['--lsp']
   };
 
-  const filePattern: string = '**/*.{' +
-  ['fs', 'fsi', 'fst', 'fsti'].join() + '}';
-
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: 'file', pattern: filePattern }]
+    documentSelector: [{ scheme: 'file', language: 'fstar' },
+                       { scheme: 'file', language: 'fsharp' }]
   };
 
   const fstarClient = new LanguageClient('F* Language Server', serverOptions, clientOptions);
 
   console.log('F* Language Server is now active!');
   context.subscriptions.push(fstarClient.start());
-  context.subscriptions.push(vscode.commands.registerCommand(
-    'vsfstar.switchheadersource', async () => {
-      const uri =
-        vscode.Uri.file(vscode.window.activeTextEditor.document.fileName);
-      if (!uri) {
-        return;
-      }
-      const docIdentifier =
-        TextDocumentIdentifier.create(uri.toString());
-      const sourceUri = await fstarClient.sendRequest(
-        SwitchSourceHeaderRequest.type, docIdentifier);
-      if (!sourceUri) {
-        return;
-      }
-      const doc = await vscode.workspace.openTextDocument(
-        vscode.Uri.parse(sourceUri));
-      vscode.window.showTextDocument(doc);
-    }));
-  const status = new FileStatus();
-  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
-    status.updateStatus();
-  }));
-  fstarClient.onDidChangeState(
-    ({ newState }) => {
-      if (newState === State.Running) {
-        // fstar.exe starts or restarts after crash.
-        fstarClient.onNotification(
-          'textDocument/fstar.fileStatus',
-          (fileStatus) => { status.onFileUpdated(fileStatus); });
-      } else if (newState === State.Stopped) {
-        // Clear all cached statuses when fstar crashes.
-        status.clear();
-      }
-    });
+
   // An empty place holder for the activate command, otherwise we'll get an
   // "command is not registered" error.
   context.subscriptions.push(vscode.commands.registerCommand(

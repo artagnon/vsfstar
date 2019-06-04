@@ -24,6 +24,7 @@
   ],
   "activationEvents": [
     "onLanguage:fstar",
+    "onLanguage:fsharp",
     "onCommand:vsfstar.activate"
   ],
   "main": "out/extension",
@@ -36,21 +37,10 @@
           "type": "string",
           "default": "fstar.exe",
           "description": "The path to F* executable"
-        },
-        "fstar.arguments": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Arguments for F* server"
         }
       }
     },
     "commands": [
-      {
-        "command": "vsfstar.switchheadersource",
-        "title": "Switch between Source/Header"
-      },
       {
         "command": "vsfstar.activate",
         "title": "Manually activate fstar extension"
