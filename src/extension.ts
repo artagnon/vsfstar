@@ -4,7 +4,9 @@ import {
   ServerOptions,
   LanguageClient
 } from 'vscode-languageclient';
-
+import * as path from 'path';
+import * as fs from 'fs';
+import { execSync } from 'child_process';
 /**
  * Method to get workspace configuration option
  * @param option name of the option (e.g. for fstar.path should be path)
@@ -15,12 +17,37 @@ function getConfig<T>(option: string, defaultValue?: any): T {
   return config.get<T>(option, defaultValue);
 }
 
+// Support for hacking on the F* compiler is built-in
+function includeArgsForCompilerHacking(rootPath: string): string[] {
+  const srcDir = path.join(rootPath, 'src');
+  const srcExcludes = ['.cache.boot', 'VS', 'ocaml-output', 'tests'];
+  const isDir = (source: fs.PathLike) => fs.lstatSync(source).isDirectory();
+  const args = fs.readdirSync(srcDir)
+                 .filter(name => srcExcludes.indexOf(name) === -1)
+                 .map(name => path.join(srcDir, name))
+                 .filter(isDir)
+                 .map(dir => ['--include', dir]);
+  return [].concat.apply(['--MLish'], args);
+}
+
 // This method is called when your extension is activated
 // the very first time
 export function activate(context: vscode.ExtensionContext) {
+  let includeArgs: string[];
+  try {
+    const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    const output = execSync('git rev-list --max-parents=0 @',
+                            {cwd: rootPath}).toString();
+    // Identify FStar.git using the SHA1 of the very first commit
+    includeArgs = output.startsWith('05758a0e58a1e') ?
+                  includeArgsForCompilerHacking(rootPath) : [];
+  } catch(_) {
+    includeArgs = [];
+  }
+
   const serverOptions: ServerOptions = {
     command: getConfig<string>('path'),
-    args: ['--lsp']
+    args: ['--lsp'].concat(includeArgs)
   };
 
   const clientOptions: LanguageClientOptions = {
