@@ -33,17 +33,18 @@ function includeArgsForCompilerHacking(rootPath: string): string[] {
 // This method is called when your extension is activated
 // the very first time
 export function activate(context: vscode.ExtensionContext) {
-  let includeArgs: string[];
+  let includeArgs: string[] = [];
+  let docSel: { scheme: string; language: string; }[] = [];
   try {
     const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
     const output = execSync('git rev-list --max-parents=0 @',
                             {cwd: rootPath}).toString();
     // Identify FStar.git using the SHA1 of the very first commit
-    includeArgs = output.startsWith('05758a0e58a1e') ?
-                  includeArgsForCompilerHacking(rootPath) : [];
-  } catch(_) {
-    includeArgs = [];
-  }
+    if (output.startsWith('05758a0e58a1e')) {
+      includeArgs = includeArgsForCompilerHacking(rootPath);
+      docSel = [{ scheme: 'file', language: 'fsharp' }];
+    }
+  } catch(_) {}
 
   const serverOptions: ServerOptions = {
     command: getConfig<string>('path'),
@@ -51,8 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
   };
 
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: 'file', language: 'fstar' },
-                       { scheme: 'file', language: 'fsharp' }]
+    documentSelector: [{ scheme: 'file', language: 'fstar' }].concat(docSel)
   };
 
   const fstarClient = new LanguageClient('F* Language Server', serverOptions, clientOptions);
