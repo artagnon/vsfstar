@@ -30,8 +30,6 @@ function includeArgsForCompilerHacking(rootPath: string): string[] {
   return [].concat.apply(['--MLish'], args);
 }
 
-// This method is called when your extension is activated
-// the very first time
 export function activate(context: vscode.ExtensionContext) {
   let includeArgs: string[] = [];
   let docSel: { scheme: string; language: string; }[] = [];
