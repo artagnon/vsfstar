@@ -13,7 +13,7 @@ import { execSync } from 'child_process';
  * @param defaultValue default value to return if option is not set
  */
 function getConfig<T>(option: string, defaultValue?: any): T {
-  const config = vscode.workspace.getConfiguration('fstar');
+  const config = vscode.workspace.getConfiguration('vsfstar');
   return config.get<T>(option, defaultValue);
 }
 
@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
     documentSelector: [{ scheme: 'file', language: 'fstar' }].concat(docSel)
   };
 
-  const fstarClient = new LanguageClient('F* Language Server', serverOptions, clientOptions);
+  const fstarClient = new LanguageClient('vsfstar', 'F* Language Server', serverOptions, clientOptions);
 
   console.log('F* Language Server is now active!');
   context.subscriptions.push(fstarClient.start());
