@@ -46,7 +46,7 @@
             "messages",
             "verbose"
           ],
-          "default": "messages",
+          "default": "off",
           "description": "Trace LSP messages"
         }
       }
