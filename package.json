@@ -8,7 +8,7 @@
     "url": "https://github.com/artagnon/vsfstar"
   },
   "license": "MIT",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.33.0"
   },
