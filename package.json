@@ -12,6 +12,7 @@
   "engines": {
     "vscode": "^1.33.0"
   },
+  "icon": "assets/vsfstar.png",
   "categories": [
     "Programming Languages",
     "Linters",
