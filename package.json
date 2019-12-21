@@ -60,7 +60,7 @@
       {
         "id": "fstar",
         "extensions": [
-          ".fs",
+          ".fs7",
           ".fst",
           ".fsti"
         ],
