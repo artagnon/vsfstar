@@ -1,7 +1,11 @@
 {
   "name": "vsfstar",
   "description": "F* LSP client",
-  "author": "Ramkumar Ramachandra",
+  "author": {
+    "name": "Ramkumar Ramachandra",
+    "email": "artagnon@gmail.com",
+    "url": "https://artagnon.com"
+  },
   "publisher": "artagnon",
   "repository": {
     "type": "git",
@@ -10,7 +14,7 @@
   "license": "MIT",
   "version": "0.0.6",
   "engines": {
-    "vscode": "^1.33.0"
+    "vscode": "^1.41.0"
   },
   "icon": "assets/vsfstar.png",
   "categories": [
@@ -52,6 +56,24 @@
         }
       }
     },
+    "languages": [
+      {
+        "id": "fstar",
+        "extensions": [
+          ".fs",
+          ".fst",
+          ".fsti"
+        ],
+        "configuration": "fstar.configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "fstar",
+        "scopeName": "source.fstar",
+        "path": "./syntax/fstar.tmGrammar.json"
+      }
+    ],
     "commands": [
       {
         "command": "vsfstar.activate",
@@ -61,22 +83,19 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -b",
+    "compile": "npx js-yaml syntax/fstar.tmGrammar.yaml >syntax/fstar.tmGrammar.json && tsc -b",
     "watch": "tsc -b -w",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "node ./node_modules/vscode/bin/test"
   },
-  "extensionDependencies": [
-    "josser.language-fstar"
-  ],
   "dependencies": {
     "vscode-languageclient": "^5.2.1"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.6.8",
-    "tslint": "^5.18.0",
-    "typescript": "^3.5.3",
-    "vscode": "^1.1.35"
+    "@types/node": "^12.12.21",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4",
+    "vscode": "^1.1.36"
   }
 }
