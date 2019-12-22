@@ -42,17 +42,6 @@
           "type": "string",
           "default": "fstar.exe",
           "description": "The path to F* executable"
-        },
-        "vsfstar.trace.server": {
-          "scope": "window",
-          "type": "string",
-          "enum": [
-            "off",
-            "messages",
-            "verbose"
-          ],
-          "default": "off",
-          "description": "Trace LSP messages"
         }
       }
     },
