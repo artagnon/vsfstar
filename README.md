@@ -1,5 +1,7 @@
 # vsfstar
 
+[![](https://vsmarketplacebadge.apphb.com/version/artagnon.vsfstar.svg)](https://marketplace.visualstudio.com/items?itemName=artagnon.vsfstar)
+
 A [Visual Studio Code](https://code.visualstudio.com) extension for F\*, with support for hacking on the F\* compiler baked in. Uses the [Language Server Protocol](https://microsoft.github.io/language-server-protocol/overview) to provide the following features:
 
 - [x] Syntax highlighting forked from [vscode-language-fstar](https://github.com/Supernerd11/vscode-language-fstar)
